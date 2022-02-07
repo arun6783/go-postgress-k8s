@@ -3,11 +3,16 @@ postgress:
 
 createdb:
 	docker exec -it go-postgress-k8 createdb --username=root --owner=root simple_bank
+
 dropdb:
 	docker exec -it go-postgress-k8 dropdb simple_bank
+
 migrateup:
 	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
+
 migratedown:
 	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 
-.PHONY: postgress createdb	dropdb migrateup migratedown
+sqlc:
+	docker run --rm -v C:\GoProjects\src\github.com\arun6783\go-postgress-k8s\db:/src -w /src kjconroy/sqlc generate
+.PHONY: postgress createdb	dropdb migrateup migratedown sqlc
