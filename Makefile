@@ -15,4 +15,9 @@ migratedown:
 
 sqlc:
 	docker run --rm -v C:\GoProjects\src\github.com\arun6783\go-postgress-k8s\db:/src -w /src kjconroy/sqlc generate
-.PHONY: postgress createdb	dropdb migrateup migratedown sqlc
+
+
+test:
+	go test -v -cover ./...
+
+.PHONY: postgress createdb	dropdb migrateup migratedown sqlc test
