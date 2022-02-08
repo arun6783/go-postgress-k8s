@@ -1,4 +1,0 @@
-make: Entering directory 'c:/GoProjects/src/github.com/arun6783/go-postgress-k8s'
-docker run --name go-postgress-k8 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
-make: Leaving directory 'c:/GoProjects/src/github.com/arun6783/go-postgress-k8s'
- 
