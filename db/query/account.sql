@@ -11,6 +11,11 @@ INSERT INTO accounts (
 select * from accounts
 WHERE id =$1 LIMIT 1;
 
+-- name: GetAccountForUpdate :one
+SELECT * FROM accounts
+WHERE id = $1 LIMIT 1
+FOR NO KEY UPDATE;
+
 -- name: ListAccounts :many
 select * from accounts
 order by id
@@ -23,6 +28,12 @@ set balance =$2
 where id=$1
 RETURNING *;
 
+-- name: AddAccountBalance :one
+UPDATE accounts
+SET balance = balance + sqlc.arg(amount)
+WHERE id = sqlc.arg(id)
+RETURNING *;
+
 -- name: DeleteAccount :exec
-delete from accounts
-where id=$1;
+DELETE FROM accounts
+WHERE id = $1;
