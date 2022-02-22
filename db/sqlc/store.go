@@ -4,24 +4,31 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	_ "github.com/golang/mock/mockgen/model"
 )
+
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
 
 //store provides all function to execute db in transactions
 //this is a example of composition instead of using inheritance
-type Store struct {
+type SqlStore struct {
 	*Queries
 	db *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	return &SqlStore{
 		db:      db,
 		Queries: New(db),
 	}
 }
 
 //takes in context and a callback fun as parameteres
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SqlStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -55,7 +62,7 @@ type TransferTxResult struct {
 //tranfer performs a money transfer from one account to other
 // it creates a transfer record, add account entries, updates account blance with in a single database transaction
 
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SqlStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 
 	var result TransferTxResult
 
