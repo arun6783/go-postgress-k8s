@@ -6,20 +6,21 @@ import (
 
 	"github.com/arun6783/go-postgress-k8s/api"
 	db "github.com/arun6783/go-postgress-k8s/db/sqlc"
+	"github.com/arun6783/go-postgress-k8s/utils"
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbDriver      = "postgres"
-	dbSource      = "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable"
-	serverAddress = "0.0.0.0:8086"
-)
-
 func main() {
-
-	var conn *sql.DB
 	var err error
-	conn, err = sql.Open(dbDriver, dbSource)
+	var config utils.Config
+	var conn *sql.DB
+
+	config, err = utils.LoadConfig(".")
+
+	if err != nil {
+		log.Fatal("Error occured when loading config")
+	}
+	conn, err = sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("Error occured when opening db connection", err)
 	}
@@ -28,7 +29,7 @@ func main() {
 
 	server := api.NewServer(store)
 
-	err = server.Start(serverAddress)
+	err = server.Start(config.ServerAddress)
 
 	if err != nil {
 		log.Fatal("Error occured when starting server", err)
